@@ -7,6 +7,15 @@ Realiser par : Téo BARATHIER et Flora GOICOECHEA
 Encadrant: Monsieur GOUDOT
  
 ## Sommaire 
+ -Introduction
+ -Schema d'achitecture
+ -Matereil utilisé
+ -Acquisition et Transmission des Données
+ -Stockage et Exploitation des Données
+ -Affichage et interface utilisateur
+ -Sécurisation et fiabilité
+ -Alertes et automatisation
+ -Conclusion
 
 
 ## Introduction
@@ -15,6 +24,13 @@ L'objectif est de concevoir un système de surveillance de température en utili
 
 ## 1. Schéma d’architecture
 
+## 2. Materiel utilisé
+
+- Capteur LM35 : capteur analogique de température délivrant une tension proportionnelle à la température.
+
+- ESP32 : microcontrôleur chargé de l’acquisition des données, du traitement et de la communication avec le broker MQTT du Centre IA.
+
+- Raspberry Pi : ordinateur monocarte utilisé pour le stockage des données, l’exécution de Node-RED et l’exploitation des informations reçues.
 
 
 ## 2. Acquisition et Transmission des Données
@@ -25,6 +41,7 @@ La température est mesurée à l’aide du capteur analogique LM35, connecté �
 	<img src="Montage.jpg" width="360" height="360">
 </p>
 
+![Montage](Montage.jpg)
 L’ESP32 convertit cette tension en valeur numérique, puis calcule la température en degrés Celsius
 
 Voici le script Arduino pour lire la temperature du capteur LM35 sur ESP 32
