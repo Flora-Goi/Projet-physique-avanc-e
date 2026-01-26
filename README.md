@@ -6,10 +6,7 @@ Realiser par : Téo BARATHIER et Flora GOICOECHEA
 
 Encadrant: Monsieur GOUDOT
  
-
-
 ## Sommaire 
-
 
 
 ## Introduction
@@ -53,31 +50,8 @@ delay(2000);
 }
 ```
 
-## 3. Stockage et Exploitation des Données
 
-Pour stocker les donnes on utilise SQLite 
-
-## 4.Affichage et interface utilisateur
-
-Pour afficher les donner dans une graphique on utilise node red pour reussir on utilise centre IA pour reliser la carte ESP32 a node red
-On utilise Node-RED comme outil pour afficher les données en temps réel. Cela va permettre d'afficher la temperature en instantané et de tracer un graphique qui représente l'evolution de la temperature en fonction du temps 
-
-Sur node red on realise le schema suivant : 
-
-avec les blocs : 
-- SQLite
-
--Debug
-
-
-
-
-
-
-
-
-
-
+Après calcul, la température est publiée par l’ESP32 sur un topic MQTT. Ces valeurs sont envoyer au broker MQTT du Centre IA. Dès qu’un message est publié par l'esp32, il est automatiquement reçu par le Raspberry Pi. La fréquence d’envoi des mesures est contrôlée pour minimiser la consomation electrique 
 
 
 Pour connecter notre esp32 au wifi et pour le relier a node red on utilise le programme Arduino suivant : 
@@ -160,6 +134,42 @@ client.disconnect(); // disconnect from the MQTT broker
 delay(1000*10); // print new values every 10 seconds
 }
 ```
+
+
+
+
+
+## 3. Stockage et Exploitation des Données
+
+Les données reçues par le Raspberry Pi via le broker MQTT du Centre IA sont stockées dans une base de données SQLite.
+
+## 4.Affichage et interface utilisateur
+
+On utilise Node-RED comme outil pour afficher les données en temps réel. Cela va permettre d'afficher la temperature en instantané et de tracer un graphique qui représente l'evolution de la temperature en fonction du temps. 
+
+
+Sur node red on realise le schema suivant : 
+
+On utilise les blocs : 
+- Fonction 
+- MQTT
+- Jauge de temperature 
+- Un graphique 
+- SQLite
+- 2 Debug
+
+On obtient le graphique et la jauge suivante qui evolue en temps relle 
+<p align="center">
+	<img src="Jauge.pdf" width="360" height="360">
+</p>
+
+## 5. Sécurisation et fiabilité
+
+
+## 6. Alertes et automatisation
+
+
+
 
 
 
