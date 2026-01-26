@@ -8,8 +8,8 @@ Encadrant: Monsieur GOUDOT
  
 ## Sommaire 
  - Introduction
- - Schema d'achitecture
- - Matereil utilisé
+ - Schema architecture
+ - Matériel utilisé
  - Acquisition et Transmission des Données
  - Stockage et Exploitation des Données
  - Affichage et interface utilisateur
@@ -67,7 +67,7 @@ delay(2000);
 ```
 
 
-Après calcul, la température est publiée par l’ESP32 sur un topic MQTT. Ces valeurs sont envoyer au broker MQTT du Centre IA. Dès qu’un message est publié par l'esp32, il est automatiquement reçu par le Raspberry Pi. La fréquence d’envoi des mesures est contrôlée pour minimiser la consomation electrique 
+Après calcul, la température est publiée par l’ESP32 sur un topic MQTT. Ces valeurs sont envoyer au broker MQTT du Centre IA. Dès qu’un message est publié par l'esp32, il est automatiquement reçu par le Raspberry Pi. La fréquence d’envoi des mesures est contrôlée pour minimiser la consommation electrique 
 
 
 Pour connecter notre esp32 au wifi et pour le relier a node red on utilise le programme Arduino suivant : 
@@ -153,11 +153,13 @@ delay(1000*10); // print new values every 10 seconds
 
 
 
-
-
 ## 3. Stockage et Exploitation des Données
 
-Les données reçues par le Raspberry Pi via le broker MQTT du Centre IA sont stockées dans une base de données SQLite.
+Les données reçues par le Raspberry Pi via le broker MQTT du Centre IA sont stockées dans une base de données SQLite pour cela on installe un SQLite grace a la commande "sudo apt install sqlite3" puis on fait "ls" pour savoir dans quelle base on se trouve puis "pwd" pour voir dans quel repertoire on se situe dans notre cas "/home/teo" cela nous permet de parameter le bloc SQLite avec la database : /home/teo/ma_base.db 
+
+On obtient les valeurs  en temps reel dans la console de node red et raspberry  
+
+
 
 ## 4.Affichage et interface utilisateur
 
@@ -166,28 +168,39 @@ On utilise Node-RED comme outil pour afficher les données en temps réel. Cela 
 
 Sur node red on realise le schema suivant : 
 
-On utilise les blocs : 
-- Fonction 
-- MQTT
-- Jauge de temperature 
-- Un graphique 
-- SQLite
-- 2 Debug
 
-On obtient le graphique et la jauge suivante qui evolue en temps relle 
+
+
+On utilise les blocs : 
+- Fonction : elle permet de determiner ce que l'on met dans les messages pour nous la fonction nous donne les valeurs du capteur en temps réelle,
+- MQTT : on le paramètre avec centre ia on a personnaliser le nom du topic (TeoFlora)
+- SQLite database : /home/teo/ma_base.db 
+- 2 Debug elle nous permet de recevoir ce qui sircule dans les message  en temps reel 
+- Une jauge 
+- Un graphique 
+on défini un groupe pour avoir la jauge et le graphique sur la meme page
+ 
+
+On obtient le graphique et la jauge suivante qui évolue en temps réelle 
 <p align="center">
 	<img src="Jauge.png" width="360" height="400">
 </p>
 
+
+
+
 ## 5. Sécurisation et fiabilité
+
+On a ajouter une authentification MQTT dans le programme  
+
+<p align="center">
+	<img src="Authentification.png" width="360" height="400">
+</p>
 
 
 ## 6. Alertes et automatisation
 
-
-
-
-
+La led s'allume lorsque esp 32 envoyer la valeur au mqtt
 
 
 
