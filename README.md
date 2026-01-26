@@ -53,11 +53,11 @@ delay(2000);
 }
 ```
 
-##3. Stockage et Exploitation des Données
+## 3. Stockage et Exploitation des Données
 
 Pour stocker les donnes on utilise SQLite 
 
-##4.Affichage et interface utilisateur
+## 4.Affichage et interface utilisateur
 
 Pour afficher les donner dans une graphique on utilise node red pour reussir on utilise centre IA pour reliser la carte ESP32 a node red
 On utilise Node-RED comme outil pour afficher les données en temps réel. Cela va permettre d'afficher la temperature en instantané et de tracer un graphique qui représente l'evolution de la temperature en fonction du temps 
@@ -66,6 +66,7 @@ Sur node red on realise le schema suivant :
 
 avec les blocs : 
 - SQLite
+
 -Debug
 
 
