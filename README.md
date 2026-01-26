@@ -176,7 +176,7 @@ On utilise les blocs :
 
 On obtient le graphique et la jauge suivante qui evolue en temps relle 
 <p align="center">
-	<img src="Jauge.pdf" width="360" height="360">
+	<img src="Jauge.png" width="360" height="360">
 </p>
 
 ## 5. Sécurisation et fiabilité
