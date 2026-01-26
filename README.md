@@ -41,7 +41,6 @@ La température est mesurée à l’aide du capteur analogique LM35, connecté �
 	<img src="Montage.jpg" width="360" height="360">
 </p>
 
-![Montage](Montage.jpg)
 L’ESP32 convertit cette tension en valeur numérique, puis calcule la température en degrés Celsius
 
 Voici le script Arduino pour lire la temperature du capteur LM35 sur ESP 32
