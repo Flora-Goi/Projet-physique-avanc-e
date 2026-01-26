@@ -201,7 +201,9 @@ On a ajouter une authentification MQTT dans le programme
 ## 6. Alertes et automatisation
 
 La led s'allume lorsque esp 32 envoyer la valeur au mqtt
-
+<p align="center">
+	<img src="Lumiere.jpg" width="360" height="400">
+</p>
 
 
 ## Conclusion
