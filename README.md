@@ -26,7 +26,7 @@ RED.
 La température est mesurée à l’aide du capteur analogique LM35, connecté à une entrée analogique 33 de l’ESP32. Le capteur fournit une tension proportionnelle à la température ambiante.
 
 <p align="center">
-	<img src="photo montage.jpg" width="360" height="360">
+	<img src="photo montage" width="360" height="360">
 </p>
 
 L’ESP32 convertit cette tension en valeur numérique, puis calcule la température en degrés Celsius
