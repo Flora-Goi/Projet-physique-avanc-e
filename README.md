@@ -7,15 +7,15 @@ Realiser par : Téo BARATHIER et Flora GOICOECHEA
 Encadrant: Monsieur GOUDOT
  
 ## Sommaire 
- -Introduction
- -Schema d'achitecture
- -Matereil utilisé
- -Acquisition et Transmission des Données
- -Stockage et Exploitation des Données
- -Affichage et interface utilisateur
- -Sécurisation et fiabilité
- -Alertes et automatisation
- -Conclusion
+ - Introduction
+ - Schema d'achitecture
+ - Matereil utilisé
+ - Acquisition et Transmission des Données
+ - Stockage et Exploitation des Données
+ - Affichage et interface utilisateur
+ - Sécurisation et fiabilité
+ - Alertes et automatisation
+ - Conclusion
 
 
 ## Introduction
