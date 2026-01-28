@@ -217,6 +217,22 @@ La led s'allume lorsque esp 32 envoyer la valeur au mqtt
 	<img src="Lumiere.jpg" width="360" height="400">
 </p>
 
+On place un systeme d'alerte grace au schema suivant: 
+
+
+
+Cela nous permet de recevoir un message sur discord lorsque la valeur est trop haute c'est a dire lorsqu'elle dépasse les 20 degres 
+
+
+
+
+<p align="center">
+	<img src="Resultat-alerte.png" width="360" height="400">
+</p>
+
+On place un systeme d'alerte grace au schema suivant: 
+
+
 
 ## Conclusion
 Bilan du projet
