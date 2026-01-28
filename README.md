@@ -6,25 +6,26 @@ Realiser par : Téo BARATHIER et Flora GOICOECHEA
 
 Encadrant: Monsieur GOUDOT
  
-## Sommaire 
- - Introduction
- - Schema architecture
- - Matériel utilisé
- - Acquisition et Transmission des Données
- - Stockage et Exploitation des Données
- - Affichage et interface utilisateur
- - Sécurisation et fiabilité
- - Alertes et automatisation
- - Conclusion
+## Sommaire
+
+- Introduction
+- Schéma d’architecture
+- Matériel utilisé
+- Acquisition et transmission des données
+- Stockage et exploitation des données
+- Affichage et interface utilisateur
+- Sécurisation et fiabilité
+- Alertes et automatisation
+- Conclusion
 
 
 ## Introduction
 
-L'objectif est de concevoir un système de surveillance de température en utilisant un capteur LM35, un ESP32, un Raspberry Pi, et le protocole MQTT. Les données seront transmises au Raspberry Pi via Mosquitto, stockées dans une base de données SQLite, et affichées en temps réel via Node-RED.
+L’objectif est de concevoir un système de surveillance de la température en utilisant un capteur LM35, un ESP32, un Raspberry Pi et le protocole MQTT. Les données seront transmises au Raspberry Pi via Mosquitto, stockées dans une base de données SQLite et affichées en temps réel à l’aide de Node-RED.
 
 ## 1. Schéma d’architecture
 
-## 2. Materiel utilisé
+## 2. Matériel utilisé
 
 - Capteur LM35 : capteur analogique de température délivrant une tension proportionnelle à la température.
 
@@ -32,18 +33,17 @@ L'objectif est de concevoir un système de surveillance de température en utili
 
 - Raspberry Pi : ordinateur monocarte utilisé pour le stockage des données, l’exécution de Node-RED et l’exploitation des informations reçues.
 
+## 3.Acquisition et transmission des données
 
-## 2. Acquisition et Transmission des Données
-
-La température est mesurée à l’aide du capteur analogique LM35, connecté à l'entrée analogique 33 de l’ESP32. Le capteur fournit une tension proportionnelle à la température ambiante.
+La température est mesurée à l’aide du capteur analogique LM35, connecté à l’entrée analogique 33 de l’ESP32. Le capteur fournit une tension proportionnelle à la température ambiante.
 
 <p align="center">
 	<img src="Montage.jpg" width="360" height="360">
 </p>
 
-L’ESP32 convertit cette tension en valeur numérique, puis calcule la température en degrés Celsius
+L’ESP32 convertit cette tension en valeur numérique, puis calcule la température en degrés Celsius.
 
-Voici le script Arduino pour lire la temperature du capteur LM35 sur ESP 32
+Voici le script Arduino permettant de lire la température du capteur LM35 sur l’ESP32.
 
 ```bash
 void setup()
@@ -67,10 +67,11 @@ delay(2000);
 ```
 
 
-Après calcul, la température est publiée par l’ESP32 sur un topic MQTT. Ces valeurs sont envoyer au broker MQTT du Centre IA. Dès qu’un message est publié par l'esp32, il est automatiquement reçu par le Raspberry Pi. La fréquence d’envoi des mesures est contrôlée pour minimiser la consommation electrique 
+Après le calcul, la température est publiée par l’ESP32 sur un topic MQTT. Ces valeurs sont envoyées au broker MQTT du Centre IA. Dès qu’un message est publié par l’ESP32, il est automatiquement reçu par le Raspberry Pi. La fréquence d’envoi des mesures est contrôlée afin de minimiser la consommation électrique.
 
 
-Pour connecter notre esp32 au wifi et pour le relier a node red on utilise le programme Arduino suivant : 
+Pour connecter l’ESP32 au Wi-Fi et le relier à Node-RED, nous utilisons le programme Arduino suivant :
+
 ```bash 
 #include <WiFi.h> // Enables the ESP32 to connect to the local network (via WiFi)
 #include <PubSubClient.h> // Connect and publish to the MQTT broker
@@ -152,33 +153,44 @@ delay(1000*10); // print new values every 10 seconds
 ```
 
 
+## 3. Stockage et exploitation des données
 
-## 3. Stockage et Exploitation des Données
+Les données reçues par le Raspberry Pi via le broker MQTT du Centre IA sont stockées dans une base de données SQLite.
+Pour cela, nous installons SQLite à l’aide de la commande suivante :
 
-Les données reçues par le Raspberry Pi via le broker MQTT du Centre IA sont stockées dans une base de données SQLite pour cela on installe un SQLite grace a la commande "sudo apt install sqlite3" puis on fait "ls" pour savoir dans quelle base on se trouve puis "pwd" pour voir dans quel repertoire on se situe dans notre cas "/home/teo" cela nous permet de parameter le bloc SQLite avec la database : /home/teo/ma_base.db 
+```bash 
+sudo apt install sqlite3
+```
 
-On obtient les valeurs  en temps reel dans la console de node red et raspberry  
+Ensuite, la commande ls permet de vérifier les fichiers présents, et la commande pwd permet d’identifier le répertoire courant. Dans notre cas, le répertoire utilisé est
+
+```bash 
+/home/teo
+```
+
+Cela nous permet de paramétrer le bloc SQLite de Node-RED avec la base de données suivante :
+
+```bash 
+/home/teo/ma_base.db
+```
+Les valeurs sont affichées en temps réel dans la console de Node-RED ainsi que sur le Raspberry Pi.
+Nous ajoutons ensuite une commande permettant d’enregistrer les données dans un fichier au format CSV.
 
 
+## 4. Affichage et interface utilisateur
 
-## 4.Affichage et interface utilisateur
+Node-RED est utilisé pour l’affichage des données en temps réel. Cet outil permet d’afficher la température instantanée ainsi que de tracer un graphique représentant l’évolution de la température en fonction du temps.
 
-On utilise Node-RED comme outil pour afficher les données en temps réel. Cela va permettre d'afficher la temperature en instantané et de tracer un graphique qui représente l'evolution de la temperature en fonction du temps. 
+Sur Node-RED, nous réalisons le schéma suivant :
 
+Les blocs utilisés sont les suivants :
 
-Sur node red on realise le schema suivant : 
-
-
-
-
-On utilise les blocs : 
-- Fonction : elle permet de determiner ce que l'on met dans les messages pour nous la fonction nous donne les valeurs du capteur en temps réelle,
-- MQTT : on le paramètre avec centre ia on a personnaliser le nom du topic (TeoFlora)
-- SQLite database : /home/teo/ma_base.db 
-- 2 Debug elle nous permet de recevoir ce qui sircule dans les message  en temps reel 
-- Une jauge 
-- Un graphique 
-on défini un groupe pour avoir la jauge et le graphique sur la meme page
+- Fonction : permet de définir le contenu des messages ; dans notre cas, ce bloc traite les valeurs du capteur en temps réel.
+- MQTT : configuré avec le broker du Centre IA ; le nom du topic est personnalisé (TeoFlora).
+- SQLite database : base de données située à l’emplacement /home/teo/ma_base.db.
+Deux blocs Debug : permettent de visualiser en temps réel les messages qui circulent dans le flux.
+- Une jauge : affiche la température instantanée.
+- Un graphique : représente l’évolution de la température dans le temps. Un groupe est défini afin d’afficher la jauge et le graphique sur la même page
  
 
 On obtient le graphique et la jauge suivante qui évolue en temps réelle 
