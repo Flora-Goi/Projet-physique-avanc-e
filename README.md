@@ -154,7 +154,7 @@ client.disconnect(); // disconnect from the MQTT broker
 delay(1000*10); // print new values every 10 seconds
 }
 ```
-Une fois le programme réalisé, on cree un flow node-red. On commence par y ajouter un bloc mqtt in pour la transmission des donnees sur le raspberry pi
+Une fois le programme réalisé, on crée un flow Node-RED. On commence par y ajouter un bloc MQTT in pour la transmission des données sur le Raspberry P
 
 <p align="center">
 	<img src="MQTT in.jpg" width="360" height="400">
@@ -196,7 +196,7 @@ Les valeurs en temps réel du tableau sont affichées dans la console Raspberry 
  select * from capteurs; 
 ```
 
-Voici le tableau de valeurs avec une colonne temperature, date et heure
+Voici le tableau de valeurs comportant une colonne température, une colonne date et une colonne heure.
 
 <p align="center">
 	<img src="tableau-SQLite.jpg" width="360" height="400">
@@ -237,7 +237,7 @@ Les blocs utilisés sont les suivants :
 
 
 Pour obtenir le graphique et la jauge ensemble : 
-- Ajoute un bloc fonction pour decoder la temperature 
+- On ajoute un bloc fonction pour decoder la temperature 
 - On configure la fonction avec le code ci dessous : 
 
  ```bash 
@@ -246,11 +246,11 @@ msg.topic = "INSERT INTO capteurs (valeur) VALUES ($valeur);";
 return msg;
 
 ```
-- on ajoute node-red-dashboard depuis le gestionnaire des palettes puis on ajoute les blocs jauge et graphique 
-- on les configure pour qu'ils apparaissent dans le meme group, ici "dash"
-- on déploie
+- On ajoute node-red-dashboard depuis le gestionnaire des palettes puis on ajoute les blocs jauge et graphique 
+- On les configure pour qu'ils apparaissent dans le meme group, ici "dash"
+- On déploie
 - il faut ensuite ouvrir une page dans le navigateur avec l'adresse : https://<hostname>:1880/ui, en remplacant <hostname> par l'ip donnée par la connection du raspberry donc ici LoraChoco
-On obtient le graphique et la jauge suivante qui évolue en temps réel
+On obtient le graphique et la jauge suivants qui évolue en temps réel
 <p align="center">
 	<img src="Jauge.jpg" width="360" height="400">
 </p>
@@ -267,12 +267,14 @@ On a ajouter une authentification MQTT dans le programme
 
 ## 7. Alertes et automatisation
 
-Pour la mise en place du systeme d' alertes: 
-- On commence par ajouter le bloc http request, pour le parametrage de ce bloc on choisi la method POST 
-- En parallele on choisit d'envoyer l'alerte via discord. On crée un serveur via lequel les données vont pouvoir etre transmise. Ce serveur possede un URL que l'on met directement dans notre bloc 
-- Il faut egalement choisir " a UTF-8 string "
-- Puis dans Headers on choisit content-type et application/json 
-- On crée unn nouveau bloc fonction dans lequel on rentre le code suivant  
+Pour la mise en place du système d’alertes :
+
+- On commence par ajouter le bloc HTTP request. Pour le paramétrage de ce bloc, on choisit la méthode POST.
+- En parallèle, on choisit d’envoyer l’alerte via Discord. On crée un serveur via lequel les données vont pouvoir être transmises. Ce serveur possède une URL que l’on renseigne directement dans le bloc.
+- Il faut également choisir « a UTF-8 string ».
+- Puis, dans Headers, on choisit Content-Type et application/json.
+- On crée ensuite un nouveau bloc fonction, dans lequel on entre le code suivant :
+
 
 ```bash
 let valeur = Number(msg.payload);
@@ -288,7 +290,7 @@ if (valeur > seuil) {
 }
 ```
 
-Cela permet de recevoir un message sur Discord lorsque la valeur dépasse un seuil qui est ici de 20°C.
+Cela permet de recevoir un message sur Discord lorsque la valeur dépasse un seuil, fixé ici à 20 °C.
 
 
 <p align="center">
@@ -296,8 +298,7 @@ Cela permet de recevoir un message sur Discord lorsque la valeur dépasse un seu
 </p>
  
 
-Pour allumer la LED il faut installer dans la bibliothèque Arduino la library Adafruit Neo pixel puis on televerse le programme  suivant : 
-
+Pour allumer la LED, il faut installer dans la bibliothèque Arduino la librairie Adafruit NeoPixel, puis téléverser le programme suivant
 ``` bash 
 
 #include <WiFi.h>
@@ -407,6 +408,8 @@ digitalWrite(RGB_BUILTIN, HIGH);  // Turn the RGB LED white
 ## Conclusion
 
 Le projet a permis de développer un système de surveillance de température complet, intégrant le capteur LM35, l’ESP32 et le protocole MQTT. Grâce à Centre IA, les données sont centralisées, analysées et utilisées pour déclencher des alertes automatiques. Les informations sont stockées dans une base SQLite et affichées en temps réel via Node-RED. 
+
+Vidéo de démonstration en annexe dans les fichiers
 
 
 
