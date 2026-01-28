@@ -155,6 +155,14 @@ delay(1000*10); // print new values every 10 seconds
 }
 ```
 
+Une fois le programme realiser on ajoute une fonction sur nod-red pour recevoir les valeurs et a l'interieur de la fonction on utilise le programme suivant : 
+
+ ```bash 
+
+
+```
+
+
 
 ## 3. Stockage et exploitation des données
 
@@ -175,8 +183,22 @@ Cela nous permet de paramétrer le bloc SQLite de Node-RED avec la base de donn�
 
 ```bash 
 /home/teo/ma_base.db
+
 ```
-Les valeurs sont affichées en temps réel dans la console de Node-RED ainsi que sur le Raspberry Pi.
+
+Les valeurs en temps réel son afficher sous forme d'un tableau dans la console Raspberry Pi grace a la commande suivante : 
+
+``` bash
+ select * from capteurs; 
+```
+
+Voici le tableau de valeurs avec une colonne temperature, date et heure
+
+<p align="center">
+	<img src="tableau-SQLite.jpg" width="360" height="400">
+</p>
+
+
 Nous ajoutons ensuite une commande permettant d’enregistrer les données dans un fichier au format CSV.
 
 
@@ -233,6 +255,13 @@ Cela nous permet de recevoir un message sur discord lorsque la valeur est trop h
  
 
 
-
 ## Conclusion
-Bilan du projet
+
+Le projet a permis de développer un système de surveillance de température complet, intégrant le capteur LM35, l’ESP32 et le protocole MQTT. Grâce à Central IA, les données sont centralisées, analysées et utilisées pour déclencher des alertes automatiques. Les informations sont stockées dans une base SQLite et affichées en temps réel via Node-RED. 
+
+
+
+
+
+
+
