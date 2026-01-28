@@ -252,7 +252,7 @@ return msg;
 - il faut ensuite ouvrir une page dans le navigateur avec l'adresse : https://<hostname>:1880/ui, en remplacant <hostname> par l'ip donnée par la connection du raspberry donc ici LoraChoco
 On obtient le graphique et la jauge suivante qui évolue en temps réel
 <p align="center">
-	<img src="Jauge.png" width="360" height="400">
+	<img src="Jauge.jpg" width="360" height="400">
 </p>
 
 
