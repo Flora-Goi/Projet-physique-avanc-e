@@ -36,7 +36,7 @@ L’objectif est de concevoir un système de surveillance de la température en 
 
 - Raspberry Pi : ordinateur monocarte utilisé pour le stockage des données, l’exécution de Node-RED et l’exploitation des informations reçues.
 
-## 3.Acquisition et transmission des données
+## 3. Acquisition et transmission des données
 
 La température est mesurée à l’aide du capteur analogique LM35, connecté à l’entrée analogique 33 de l’ESP32. Le capteur fournit une tension proportionnelle à la température ambiante.
 
@@ -158,13 +158,15 @@ delay(1000*10); // print new values every 10 seconds
 Une fois le programme realiser on ajoute une fonction sur nod-red pour recevoir les valeurs et a l'interieur de la fonction on utilise le programme suivant : 
 
  ```bash 
-
+msg.payload = [msg.payload];
+msg.topic = "INSERT INTO capteurs (valeur) VALUES ($valeur);";
+return msg;
 
 ```
 
 
 
-## 3. Stockage et exploitation des données
+## 4. Stockage et exploitation des données
 
 Les données reçues par le Raspberry Pi via le broker MQTT du Centre IA sont stockées dans une base de données SQLite.
 Pour cela, nous installons SQLite à l’aide de la commande suivante :
@@ -202,7 +204,7 @@ Voici le tableau de valeurs avec une colonne temperature, date et heure
 Nous ajoutons ensuite une commande permettant d’enregistrer les données dans un fichier au format CSV.
 
 
-## 4. Affichage et interface utilisateur
+## 5. Affichage et interface utilisateur
 
 Node-RED est utilisé pour l’affichage des données en temps réel. Cet outil permet d’afficher la température instantanée ainsi que de tracer un graphique représentant l’évolution de la température en fonction du temps.
 
@@ -226,7 +228,7 @@ On obtient le graphique et la jauge suivante qui évolue en temps réelle
 
 
 
-## 5. Sécurisation et fiabilité
+## 6. Sécurisation et fiabilité
 
 On a ajouter une authentification MQTT dans le programme  
 
@@ -235,7 +237,7 @@ On a ajouter une authentification MQTT dans le programme
 </p>
 
 
-## 6. Alertes et automatisation
+## 7. Alertes et automatisation
 
 La led s'allume lorsque esp 32 envoyer la valeur au mqtt
 <p align="center">
@@ -245,7 +247,20 @@ La led s'allume lorsque esp 32 envoyer la valeur au mqtt
 On place un systeme d'alerte grace au schema suivant: 
 
 
+Dans la fonction on rentre le programme suivant : 
+```bash
+let valeur = Number(msg.payload);
+let seuil = 20;
+if (isNaN(valeur)){
+ return null;
+ }
+if (valeur > seuil) {
 
+ 
+ msg.payload = {"username": "test", "content": "Alerte température : " + valeur + " trop haute"};
+ return msg;
+}
+```
 Cela nous permet de recevoir un message sur discord lorsque la valeur est trop haute on a choisi d'envoyer une aletre lorsuq'elle depasse les 20 degres 
 
 
@@ -253,7 +268,6 @@ Cela nous permet de recevoir un message sur discord lorsque la valeur est trop h
 	<img src="Resultat-alerte.png" width="360" height="400">
 </p>
  
-
 
 ## Conclusion
 
