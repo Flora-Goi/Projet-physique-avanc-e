@@ -154,8 +154,8 @@ client.disconnect(); // disconnect from the MQTT broker
 delay(1000*10); // print new values every 10 seconds
 }
 ```
+Une fois le programme réalisé, on ajoute une fonction Node-RED pour recevoir les valeurs, on écrit le programme suivant dans le bloc fonction 
 
-Une fois le programme realiser on ajoute une fonction sur nod-red pour recevoir les valeurs et a l'interieur de la fonction on utilise le programme suivant : 
 
  ```bash 
 msg.payload = [msg.payload];
@@ -163,8 +163,6 @@ msg.topic = "INSERT INTO capteurs (valeur) VALUES ($valeur);";
 return msg;
 
 ```
-
-
 
 ## 4. Stockage et exploitation des données
 
@@ -188,7 +186,7 @@ Cela nous permet de paramétrer le bloc SQLite de Node-RED avec la base de donn�
 
 ```
 
-Les valeurs en temps réel son afficher sous forme d'un tableau dans la console Raspberry Pi grace a la commande suivante : 
+Les valeurs en temps réel son afficher sous forme d'un tableau dans la console Raspberry Pi grace à la commande suivante : 
 
 ``` bash
  select * from capteurs; 
@@ -217,7 +215,6 @@ Et on obtient le tableau csv suivant :
 Node-RED est utilisé pour l’affichage des données en temps réel. Cet outil permet d’afficher la température instantanée ainsi que de tracer un graphique représentant l’évolution de la température en fonction du temps.
 
 Sur Node-RED, nous réalisons le schéma suivant :
-
 
 
 <p align="center">
@@ -254,24 +251,14 @@ On a ajouter une authentification MQTT dans le programme
 
 ## 7. Alertes et automatisation
 
-La led s'allume lorsque esp 32 envoie la valeur au mqtt
+La LED s’allume lorsque l’ESP32 envoie une valeur via MQTT.
 <p align="center">
 	<img src="Lumiere.jpg" width="360" height="400">
 </p>
 
-On place un systeme d'alerte grace au schema suivant: 
+ 
+Pour les alertes sur Discord, le bloc fonction contient le programme suivant :
 
-
-
-
-
-
-
-
-
-
-
-Sur Node -RED dans le bloc fonction on rentre le programme suivant : 
 ```bash
 let valeur = Number(msg.payload);
 let seuil = 20;
@@ -285,7 +272,7 @@ if (valeur > seuil) {
  return msg;
 }
 ```
-Cela nous permet de recevoir un message sur discord lorsque la valeur est trop haute on a choisi d'envoyer une aletre lorsuq'elle depasse les 20 degres 
+Cela permet de recevoir un message sur Discord lorsque la valeur dépasse 20°C.
 
 
 <p align="center">
