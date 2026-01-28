@@ -201,14 +201,29 @@ Voici le tableau de valeurs avec une colonne temperature, date et heure
 </p>
 
 
-Nous ajoutons ensuite une commande permettant d’enregistrer les données dans un fichier au format CSV.
+Nous ajoutons ensuite une commande permettant d’enregistrer les données dans un fichier au format CSV : 
 
+```bash
+sqlite3 ma_base.db -header -csv "select * from capteurs;" > mesures.csv
+```
+Et on obtient le tableau csv suivant :  
+
+<p align="center">
+	<img src="TableauCSV.jpg" width="360" height="400">
+</p>
 
 ## 5. Affichage et interface utilisateur
 
 Node-RED est utilisé pour l’affichage des données en temps réel. Cet outil permet d’afficher la température instantanée ainsi que de tracer un graphique représentant l’évolution de la température en fonction du temps.
 
 Sur Node-RED, nous réalisons le schéma suivant :
+
+
+
+<p align="center">
+	<img src="Node-RED.jpg" width="360" height="400">
+</p>
+
 
 Les blocs utilisés sont les suivants :
 
@@ -239,7 +254,7 @@ On a ajouter une authentification MQTT dans le programme
 
 ## 7. Alertes et automatisation
 
-La led s'allume lorsque esp 32 envoyer la valeur au mqtt
+La led s'allume lorsque esp 32 envoie la valeur au mqtt
 <p align="center">
 	<img src="Lumiere.jpg" width="360" height="400">
 </p>
@@ -247,7 +262,16 @@ La led s'allume lorsque esp 32 envoyer la valeur au mqtt
 On place un systeme d'alerte grace au schema suivant: 
 
 
-Dans la fonction on rentre le programme suivant : 
+
+
+
+
+
+
+
+
+
+Sur Node -RED dans le bloc fonction on rentre le programme suivant : 
 ```bash
 let valeur = Number(msg.payload);
 let seuil = 20;
