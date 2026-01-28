@@ -24,6 +24,9 @@ Encadrant: Monsieur GOUDOT
 L’objectif est de concevoir un système de surveillance de la température en utilisant un capteur LM35, un ESP32, un Raspberry Pi et le protocole MQTT. Les données seront transmises au Raspberry Pi via Mosquitto, stockées dans une base de données SQLite et affichées en temps réel à l’aide de Node-RED.
 
 ## 1. Schéma d’architecture
+<p align="center">
+	<img src="Architecture.png" width="360" height="400">
+</p>
 
 ## 2. Matériel utilisé
 
@@ -221,16 +224,13 @@ On place un systeme d'alerte grace au schema suivant:
 
 
 
-Cela nous permet de recevoir un message sur discord lorsque la valeur est trop haute c'est a dire lorsqu'elle dépasse les 20 degres 
-
-
+Cela nous permet de recevoir un message sur discord lorsque la valeur est trop haute on a choisi d'envoyer une aletre lorsuq'elle depasse les 20 degres 
 
 
 <p align="center">
 	<img src="Resultat-alerte.png" width="360" height="400">
 </p>
-
-On place un systeme d'alerte grace au schema suivant: 
+ 
 
 
 
