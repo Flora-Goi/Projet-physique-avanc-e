@@ -21,7 +21,7 @@ Encadrant: Monsieur GOUDOT
 
 ## Introduction
 
-L’objectif est de concevoir un système de surveillance de la température en utilisant un capteur LM35, un ESP32, un Raspberry Pi et le protocole MQTT. Les données seront transmises au Raspberry Pi via Mosquitto, stockées dans une base de données SQLite et affichées en temps réel à l’aide de Node-RED.
+L’objectif est de concevoir un système de surveillance de la température en utilisant un capteur LM35, un ESP32, un Raspberry Pi et le protocole MQTT. Les données seront transmises au Raspberry Pi via CentreIA, stockées dans une base de données SQLite et affichées en temps réel à l’aide de Node-RED.
 
 ## 1. Schéma d’architecture
 <p align="center">
@@ -154,15 +154,12 @@ client.disconnect(); // disconnect from the MQTT broker
 delay(1000*10); // print new values every 10 seconds
 }
 ```
-Une fois le programme réalisé, on ajoute une fonction Node-RED pour recevoir les valeurs, on écrit le programme suivant dans le bloc fonction 
+Une fois le programme réalisé, on cree un flow node-red. On commence par y ajouter un bloc mqtt in pour la transmission des donnees sur le raspberry pi
 
+<p align="center">
+	<img src="MQTT in.jpg" width="360" height="400">
+</p>
 
- ```bash 
-msg.payload = [msg.payload];
-msg.topic = "INSERT INTO capteurs (valeur) VALUES ($valeur);";
-return msg;
-
-```
 
 ## 4. Stockage et exploitation des données
 
@@ -185,8 +182,15 @@ Cela nous permet de paramétrer le bloc SQLite de Node-RED avec la base de donn�
 /home/teo/ma_base.db
 
 ```
+On crée ensuite un tableau appelé "capteurs" avec : 
 
-Les valeurs en temps réel son afficher sous forme d'un tableau dans la console Raspberry Pi grace à la commande suivante : 
+``` bash 
+sqlite> CREATE TABLE capteurs (id INTEGRER PRIMARY KEY, capteur TEXTE, valeur REAL, date CURRENT_TIMESTAMP);
+```
+
+
+
+Les valeurs en temps réel du tableau sont affichées dans la console Raspberry Pi grace à la commande suivante : 
 
 ``` bash
  select * from capteurs; 
@@ -224,20 +228,32 @@ Sur Node-RED, nous réalisons le schéma suivant :
 
 Les blocs utilisés sont les suivants :
 
-- Fonction : permet de définir le contenu des messages ; dans notre cas, ce bloc traite les valeurs du capteur en temps réel.
+- Function : permet de définir le contenu des messages ; dans notre cas, ce bloc traite les valeurs du capteur en temps réel.
 - MQTT : configuré avec le broker du Centre IA ; le nom du topic est personnalisé (TeoFlora).
 - SQLite database : base de données située à l’emplacement /home/teo/ma_base.db.
-Deux blocs Debug : permettent de visualiser en temps réel les messages qui circulent dans le flux.
+- Deux blocs Debug : permettent de visualiser en temps réel les messages qui circulent dans le flux.
 - Une jauge : affiche la température instantanée.
 - Un graphique : représente l’évolution de la température dans le temps. Un groupe est défini afin d’afficher la jauge et le graphique sur la même page
- 
 
-On obtient le graphique et la jauge suivante qui évolue en temps réelle 
+
+Pour obtenir le graphique et la jauge ensemble : 
+- Ajoute un bloc fonction pour decoder la temperature 
+- On configure la fonction avec le code ci dessous : 
+
+ ```bash 
+msg.payload = [msg.payload];
+msg.topic = "INSERT INTO capteurs (valeur) VALUES ($valeur);";
+return msg;
+
+```
+- on ajoute node-red-dashboard depuis le gestionnaire des palettes puis on ajoute les blocs jauge et graphique 
+- on les configure pour qu'ils apparaissent dans le meme group, ici "dash"
+- on déploie
+- il faut ensuite ouvrir une page dans le navigateur avec l'adresse : https://<hostname>:1880/ui, en remplacant <hostname> par l'ip donnée par la connection du raspberry donc ici LoraChoco
+On obtient le graphique et la jauge suivante qui évolue en temps réel
 <p align="center">
 	<img src="Jauge.png" width="360" height="400">
 </p>
-
-
 
 
 ## 6. Sécurisation et fiabilité
@@ -251,13 +267,12 @@ On a ajouter une authentification MQTT dans le programme
 
 ## 7. Alertes et automatisation
 
-La LED s’allume lorsque l’ESP32 envoie une valeur via MQTT.
-<p align="center">
-	<img src="Lumiere.jpg" width="360" height="400">
-</p>
-
- 
-Pour les alertes sur Discord, le bloc fonction contient le programme suivant :
+Pour la mise en place du systeme d' alertes: 
+- On commence par ajouter le bloc http request, pour le parametrage de ce bloc on choisi la method POST 
+- En parallele on choisit d'envoyer l'alerte via discord. On crée un serveur via lequel les données vont pouvoir etre transmise. Ce serveur possede un URL que l'on met directement dans notre bloc 
+- Il faut egalement choisir " a UTF-8 string "
+- Puis dans Headers on choisit content-type et application/json 
+- On crée unn nouveau bloc fonction dans lequel on rentre le code suivant  
 
 ```bash
 let valeur = Number(msg.payload);
@@ -272,7 +287,8 @@ if (valeur > seuil) {
  return msg;
 }
 ```
-Cela permet de recevoir un message sur Discord lorsque la valeur dépasse 20°C.
+
+Cela permet de recevoir un message sur Discord lorsque la valeur dépasse un seuil qui est ici de 20°C.
 
 
 <p align="center">
@@ -280,9 +296,117 @@ Cela permet de recevoir un message sur Discord lorsque la valeur dépasse 20°C.
 </p>
  
 
+Pour allumer la LED il faut installer dans la bibliothèque Arduino la library Adafruit Neo pixel puis on televerse le programme  suivant : 
+
+``` bash 
+
+#include <WiFi.h>
+#include <PubSubClient.h>
+
+#define RGB_BRIGHTNESS 64
+
+// WiFi
+const char* ssid = "LoraChoco";
+const char* wifi_password = "MRB3HBM0R28";
+
+// MQTT
+const char* mqtt_server = "centreia.fr";
+const char* temperature_topic = "TeoFlora";
+const char* mqtt_username = "user_iut";
+const char* mqtt_password = "IUT2026";
+const char* clientID = "client_cter_esp32_classroom";
+
+WiFiClient wifiClient;
+PubSubClient client(wifiClient);
+
+// ================= MQTT CONNECT =================
+void connect_MQTT() {
+  while (!client.connected()) {
+    Serial.print("Connexion MQTT...");
+    if (client.connect(clientID )) {
+      Serial.println("OK");
+    } else {
+      Serial.print("ECHEC, rc=");
+      Serial.println(client.state());
+      delay(2000);
+    }
+  }
+}
+
+// ================= SETUP =================
+void setup() {
+  Serial.begin(9600);
+
+  WiFi.disconnect(true);
+  delay(1000);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, wifi_password);
+
+  Serial.print("Connexion WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nWiFi connecté");
+  Serial.println(WiFi.localIP());
+
+  client.setServer(mqtt_server, 1883);
+}
+
+// ================= LOOP =================
+void loop() {
+
+  if (!client.connected()) {
+    connect_MQTT();
+  }
+  client.loop();
+
+#ifdef RGB_BUILTIN
+
+digitalWrite(RGB_BUILTIN, HIGH);  // Turn the RGB LED white
+  delay(1000);
+  digitalWrite(RGB_BUILTIN, LOW);  // Turn the RGB LED off
+  delay(1000);
+
+
+   
+#endif
+
+  int raw = analogRead(33);
+  float volts = raw * 3.3 / 4095.0;
+  float degres = volts / 0.01;
+
+  String tempStr = String(degres);
+
+  Serial.print("Température : ");
+  Serial.println(tempStr);
+
+  if (client.publish(temperature_topic, tempStr.c_str())) {
+    Serial.println("✅ MQTT envoyé");
+  } else {
+    Serial.println("❌ MQTT ECHEC");
+  }
+
+  delay(10000);
+}
+
+```
+<p align="center">
+	<img src="MQTT-envoyé.png" width="360" height="400">
+</p>
+
+
+<p align="center">
+	<img src="Lumiere.jpg" width="360" height="400">
+</p>
+
+ 
+
+
 ## Conclusion
 
-Le projet a permis de développer un système de surveillance de température complet, intégrant le capteur LM35, l’ESP32 et le protocole MQTT. Grâce à Central IA, les données sont centralisées, analysées et utilisées pour déclencher des alertes automatiques. Les informations sont stockées dans une base SQLite et affichées en temps réel via Node-RED. 
+Le projet a permis de développer un système de surveillance de température complet, intégrant le capteur LM35, l’ESP32 et le protocole MQTT. Grâce à Centre IA, les données sont centralisées, analysées et utilisées pour déclencher des alertes automatiques. Les informations sont stockées dans une base SQLite et affichées en temps réel via Node-RED. 
 
 
 
